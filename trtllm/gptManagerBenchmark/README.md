@@ -27,4 +27,4 @@ The full test process have 4 steps.
 
 2. You can auto test multiple modes like `autoBM-with-list.sh`
 
-You may need to modify them with on your environment like model path, results log and csv save path and different build engine configs, etc.
+You may need to modify them with on your environment like model path, test cases(isl, osl, batchsize), results log and csv save path and different build engine configs, etc.
