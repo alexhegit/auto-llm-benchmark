@@ -8,7 +8,7 @@ MODEL_PATHS=(
 )
 
 # Create a directory to save output files
-OUTPUT_DIR="./OUTPUT/TBM"
+OUTPUT_DIR="./OUTPUT/BMT"
 mkdir -p "$OUTPUT_DIR"
 
 # Loop through each model path and run the test
