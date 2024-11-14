@@ -45,11 +45,8 @@ for COMBINATION in "${COMBINATIONS[@]}"; do
             --num-iters-warmup 3 \
             --num-iters 5 \
             --worker-use-ray \
-            --model /data/llm/Meta-Llama-3.1-405B \
-            --quantized-weights-path /quantized/llama.safetensors \
-            --quantization fp8 \
-            --kv-cache-dtype fp8 \
-            --dtype float16 \
+            --model /data/llm/Meta-Llama-3.1-405B-Instruct-FP8-KV \
+            --quantization fp8 --kv-cache-dtype fp8 --dtype half \
             --input-len $INPUT_LEN \
             --output-len $OUTPUT_LEN \
             --batch-size $BATCH_SIZE \
