@@ -12,7 +12,7 @@ MODEL_PATHS=(
 QFILE="/quantized/llama.safetensors"
 
 # Create a directory to save output files
-OUTPUT_DIR="./OUTPUT/TBM_TP8_FP8"
+OUTPUT_DIR="./OUTPUT/BMT_TP8_FP8"
 mkdir -p "$OUTPUT_DIR"
 
 # Loop through each model path and run the test
