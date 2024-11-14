@@ -26,8 +26,8 @@ BATCH_SIZES=(
 
 # Create directories to save output files
 OUTPUT_DIR="./OUTPUT_TP4_2"
-LBM_DIR="${OUTPUT_DIR}/LBM_FP8"
-mkdir -p "$LBM_DIR"
+BML_DIR="${OUTPUT_DIR}/BML_FP8"
+mkdir -p "$BML_DIR"
 
 # Loop through each combination of input-len, output-len, and batch-size
 for COMBINATION in "${COMBINATIONS[@]}"; do
@@ -35,8 +35,8 @@ for COMBINATION in "${COMBINATIONS[@]}"; do
     OUTPUT_LEN=$(echo $COMBINATION | cut -d ' ' -f 2)
 
     for BATCH_SIZE in "${BATCH_SIZES[@]}"; do
-        LOG_FILE="${LBM_DIR}/Meta-Llama-3.1-405B_i${INPUT_LEN}_o${OUTPUT_LEN}_b${BATCH_SIZE}.log"
-        JSON_FILE="${LBM_DIR}/Meta-Llama-3.1-405B_i${INPUT_LEN}_o${OUTPUT_LEN}_b${BATCH_SIZE}.json"
+        LOG_FILE="${BML_DIR}/Meta-Llama-3.1-405B_i${INPUT_LEN}_o${OUTPUT_LEN}_b${BATCH_SIZE}.log"
+        JSON_FILE="${BML_DIR}/Meta-Llama-3.1-405B_i${INPUT_LEN}_o${OUTPUT_LEN}_b${BATCH_SIZE}.json"
 
         echo "Testing with input-len: $INPUT_LEN, output-len: $OUTPUT_LEN, and batch-size: $BATCH_SIZE"
         # Define the command with the current combination
