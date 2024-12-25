@@ -148,6 +148,10 @@ P99 E2EL (ms):                           8546.65
 ==================================================
 ```
 
+**NOTE**
+
+vLLM official provide the benchmark data at https://simon-mo-workspace.observablehq.cloud/vllm-dashboard-v0/perf
+
 ## Reference
 
 - https://github.com/vllm-project/vllm/blob/main/.buildkite/nightly-benchmarks/performance-benchmarks-descriptions.md
