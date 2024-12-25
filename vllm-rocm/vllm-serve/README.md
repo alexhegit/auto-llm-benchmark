@@ -21,7 +21,7 @@ Run the steps below in the container
 
 - Set env for better performance
 
-set_env.sh
+`set_env.sh`
 ```bash
 #!/bin/sh
 
@@ -36,7 +36,7 @@ export VLLM_USE_TRITON_FLASH_ATTN=0
 
 - Start the `vllm serve`
 
-run_vllm_serve.sh
+`run_vllm_serve.sh`
 ```bash
 #!/bin/sh
 
@@ -81,7 +81,7 @@ Download the dataset
 wget https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/resolve/main/ShareGPT_V3_unfiltered_cleaned_split.json
 ```
 
-benchmark_serving.sh
+`benchmark_serving.sh`
   ```bash
 #!/bin/sh
 BM_S=/app/vllm/benchmarks/benchmark_serving.py
