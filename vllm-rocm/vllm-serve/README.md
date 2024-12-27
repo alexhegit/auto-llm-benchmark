@@ -309,3 +309,5 @@ vLLM official provide the benchmark data at https://simon-mo-workspace.observabl
 - https://github.com/vllm-project/vllm/blob/main/.buildkite/nightly-benchmarks/performance-benchmarks-descriptions.md
 - https://simon-mo-workspace.observablehq.cloud/vllm-dashboard-v0/perf
 - https://rocm.docs.amd.com/en/latest/how-to/system-optimization/mi300x.html#mi300x-os-settings
+- https://github.com/fw-ai/benchmark
+- https://maddevs.io/writeups/first-performance-test-with-locust/
