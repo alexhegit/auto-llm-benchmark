@@ -225,7 +225,7 @@ P99 E2EL (ms):                           210843.04
 ```
 
 ### fw-ai/benchmark
-Fireworks-AI has a tool <https://github.com/fw-ai/benchmark> which is wraper of [locust](https://locust.io/) for easy usage. We could use it as the http client to test the vLLM serve.
+Fireworks-AI has a tool <https://github.com/fw-ai/benchmark> which is a wraper of [locust](https://locust.io/) for easy usage. We could use it as the http client to test the vLLM serve.
 
 - Start vLLM Serve 
 ```
