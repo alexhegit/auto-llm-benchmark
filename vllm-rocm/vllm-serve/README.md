@@ -16,7 +16,7 @@ DIMG=rocm/vllm:rocm6.2_mi300_ubuntu20.04_py3.9_vllm_0.6.4
 drun --name vllm-bm $DIMG
 ```
 
-## Benchmark
+## Benchmark Serving
 
 Run the steps below in the container
 
@@ -224,6 +224,80 @@ P99 E2EL (ms):                           210843.04
 ==================================================
 ```
 
+### fw-ai/benchmark
+Fireworks-AI has a tool <https://github.com/fw-ai/benchmark> which is wraper of [locust](https://locust.io/) for easy usage. We could use it as the http client to test the vLLM serve.
+
+- Start vLLM Serve 
+```
+MODEL=/data/llm/meta-llama/Llama-3.1-8B-Instruct/
+TP=1
+
+vllm serve $MODEL --swap-space 16 --disable-log-requests --tensor-parallel-size $TP --distributed-executor-backend mp --num-scheduler-steps 10 --dtype float16 --gpu-memory-utilization 0.9 --enable-chunked-prefill=False --max-num-seqs 1000 --max-model-len 8192 --max-num-batched-tokens 65536
+```
+- Client
+Installation
+```
+git clone https://github.com/fw-ai/benchmark
+cd ./benchmark/llm_bench
+pip install -r requirements.txt
+```
+Benchmark
+```
+MODEL=/data/llm/meta-llama/Llama-3.1-8B-Instruct/
+
+locust --provider vllm -H http://localhost:8000 --headless --summary-file vllm_locust.csv --tokenizer $MODEL  --qps 1.0 -u 100 -r 100 -p 1000 -o 100 -t 2m
+```
+Result
+```
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+POST     /v1/completions                                                                  119     0(0.00%) |      8       6       9      8 |    1.01        0.00
+GET      /v1/models                                                                         0     0(0.00%) |      0       0       0      0 |    0.00        0.00
+METRIC   latency_per_char                                                                 118     0(0.00%) |      1       0       1      1 |    1.00        0.00
+METRIC   latency_per_token                                                                  0     0(0.00%) |      0       0       0      0 |    0.00        0.00
+METRIC   num_tokens                                                                         0     0(0.00%) |      0       0       0      0 |    0.00        0.00
+METRIC   prompt_tokens                                                                      0     0(0.00%) |      0       0       0      0 |    0.00        0.00
+METRIC   time_to_first_token                                                              118     0(0.00%) |     57      55      59     57 |    1.00        0.00
+METRIC   total_latency                                                                    118     0(0.00%) |    572     567     574    570 |    1.00        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                       473     0(0.00%) |    159       0     574     10 |    4.01        0.00
+
+Response time percentiles (approximated)
+Type     Name                                                                                  50%    66%    75%    80%    90%    95%    98%    99%  99.9% 99.99%   100% # reqs
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+POST     /v1/completions                                                                         8      8      8      8      9      9      9      9     10     10     10    119
+METRIC   latency_per_char                                                                        1      1      1      1      1      2      2      2      2      2      2    118
+METRIC   time_to_first_token                                                                    57     58     58     58     58     58     58     58     59     59     59    118
+METRIC   total_latency                                                                         570    570    570    570    570    570    570    570    570    570    570    118
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+         Aggregated                                                                             10     58     59    570    570    570    570    570    570    570    570    473
+
+=================================== Summary ====================================
+Provider                 : vllm
+Model                    : /data/llm/meta-llama/Llama-3.1-8B-Instruct/
+Prompt Tokens            : 0.0
+Generation Tokens        : 100
+Stream                   : True
+Temperature              : 1.0
+Logprobs                 : None
+Concurrency              : QPS 1.0 constant
+Time To First Token      : 57.354352397496925
+Latency Per Token        : 0.0
+Num Tokens               : 0.0
+Total Latency            : 572.2289447814732
+Num Requests             : 118
+Qps                      : 0.9999774881355382
+P50 Time To First Token  : 57
+P90 Time To First Token  : 58
+P99 Time To First Token  : 58
+P99.9 Time To First Token: 59
+P50 Total Latency        : 570.0
+P90 Total Latency        : 570.0
+P99 Total Latency        : 570.0
+P99.9 Total Latency      : 570.0
+================================================================================
+
+```
 
 
 **NOTE**
