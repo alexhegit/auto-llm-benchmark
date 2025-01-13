@@ -256,7 +256,9 @@ Benchmark
 ```
 MODEL=/data/llm/meta-llama/Llama-3.1-8B-Instruct/
 
-locust --provider vllm -H http://localhost:8000 --headless --summary-file vllm_locust.csv --tokenizer $MODEL  --qps 1.0 -u 100 -r 100 -p 1000 -o 100 -t 2m
+locust --provider vllm -H http://localhost:8000 --headless \
+	--summary-file vllm_locust.csv --tokenizer $MODEL  \
+	--qps 1.0 -u 100 -r 100 -p 1000 -o 100 -t 2m
 ```
 Result
 ```
