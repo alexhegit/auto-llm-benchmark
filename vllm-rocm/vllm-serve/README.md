@@ -85,23 +85,27 @@ wget https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/r
 ```
 
 `benchmark_serving.sh`
-  ```bash
+  
+```bash
 #!/bin/sh
-BM_S=/app/vllm/benchmarks/benchmark_serving.py
-MODEL=/data/llm/Meta-Llama-3.1-8B/
+#BM_S=/app/vllm/benchmarks/benchmark_serving.py
+MODEL=Llama-3.3-70B-Instruct
 DATASET=./ShareGPT_V3_unfiltered_cleaned_split.json
 
-python3 $BM_S --backend vllm \
-	--model $MODEL \
-	--tokenizer $MODEL \
-	--dataset-name sharegpt \
-	--dataset-path $DATASET \
-	--num-prompts 200 \
-	--port 8000 \
-	--endpoint /v1/completions \
-	--percentile-metrics "ttft,tpot,itl,e2el" \
-	--save-result \
-	2>&1 | tee benchmark_serving.log
+#python3 $BM_S --backend vllm \
+vllm bench serve \
+  --backend openai \
+  --model $MODEL \
+  --tokenizer /data/$MODEL \
+  --dataset-name sharegpt \
+  --dataset-path $DATASET \
+  --num-prompts 200 \
+  --host 10.10.38.14 \
+  --port 31436 \
+  --endpoint /v1/completions \
+  --percentile-metrics "ttft,tpot,itl,e2el" \
+  --save-result \
+  2>&1 | tee benchmark_serving.log
 
 
 echo "### Serving Benchmarks" >> benchmark_results.md
@@ -113,42 +117,51 @@ echo "" >> benchmark_results.md
 echo '```' >> benchmark_results.md
 tail -n 25 benchmark_serving.log >> benchmark_results.md
 echo '```' >> benchmark_results.md
-  ```
+```
 
 The results will be saved into benchmark_results.md as this,
 
 ```
 ### Serving Benchmarks
-WARNING 12-25 08:35:21 rocm.py:17] `fork` method is not supported by ROCm. VLLM_WORKER_MULTIPROC_METHOD is overridden to `spawn` instead.
-Namespace(backend='vllm', base_url=None, host='localhost', port=8000, endpoint='/v1/completions', dataset=None, dataset_name='sharegpt', dataset_path='./ShareGPT_V3_unfiltered_cleaned_split.json', max_concurrency=None, model='/data/llm/Meta-Llama-3.1-8B/', tokenizer='/data/llm/Meta-Llama-3.1-8B/', best_of=1, use_beam_search=False, num_prompts=200, logprobs=None, request_rate=inf, seed=0, trust_remote_code=False, disable_tqdm=False, profile=False, save_result=True, metadata=None, result_dir=None, result_filename=None, ignore_eos=False, percentile_metrics='ttft,tpot,itl,e2el', metric_percentiles='99', goodput=None, sonnet_input_len=550, sonnet_output_len=150, sonnet_prefix_len=200, sharegpt_output_len=None, random_input_len=1024, random_output_len=128, random_range_ratio=1.0, random_prefix_len=0, hf_subset=None, hf_split=None, hf_output_len=None)
+INFO 09-28 06:18:56 [__init__.py:216] Automatically detected platform cuda.
+Namespace(subparser='bench', bench_type='serve', dispatch_function=<function BenchmarkServingSubcommand.cmd at 0x7fe925f29120>, seed=0, num_prompts=200, dataset_name='sharegpt', no_stream=False, dataset_path='./ShareGPT_V3_unfiltered_cleaned_split.json', no_oversample=False, custom_output_len=256, custom_skip_chat_template=False, spec_bench_output_len=256, spec_bench_category=None, sonnet_input_len=550, sonnet_output_len=150, sonnet_prefix_len=200, sharegpt_output_len=None, blazedit_min_distance=0.0, blazedit_max_distance=1.0, random_input_len=1024, random_output_len=128, random_range_ratio=0.0, random_prefix_len=0, random_batch_size=1, random_mm_base_items_per_request=1, random_mm_num_mm_items_range_ratio=0.0, random_mm_limit_mm_per_prompt={'image': 255, 'video': 0}, random_mm_bucket_config={(256, 256, 1): 0.5, (720, 1280, 1): 0.5, (720, 1280, 16): 0.0}, hf_subset=None, hf_split=None, hf_name=None, hf_output_len=None, prefix_repetition_prefix_len=256, prefix_repetition_suffix_len=256, prefix_repetition_num_prefixes=10, prefix_repetition_output_len=128, label=None, backend='openai', endpoint_type=None, base_url=None, host='10.10.38.14', port=31436, endpoint='/v1/completions', header=None, max_concurrency=None, model='Llama-3.3-70B-Instruct', tokenizer='/data/Llama-3.3-70B-Instruct', use_beam_search=False, logprobs=None, request_rate=inf, burstiness=1.0, trust_remote_code=False, disable_tqdm=False, profile=False, save_result=True, save_detailed=False, append_result=False, metadata=None, result_dir=None, result_filename=None, ignore_eos=False, percentile_metrics='ttft,tpot,itl,e2el', metric_percentiles='99', goodput=None, request_id_prefix='benchmark-serving', top_p=None, top_k=None, min_p=None, temperature=None, tokenizer_mode='auto', served_model_name=None, lora_modules=None, ramp_up_strategy=None, ramp_up_start_rps=None, ramp_up_end_rps=None, ready_check_timeout_sec=600)
+Starting initial single prompt test run...
+Waiting for endpoint to become up in 600 seconds
+ |          | 00:01 elapsed, 22:05:52 remaining
+Initial test run completed. Starting main benchmark run...
 Traffic request rate: inf
+Burstiness factor: 1.0 (Poisson process)
 Maximum request concurrency: None
-
+100%|__________| 200/200 [00:25<00:00,  7.70it/s]
+tip: install termplotlib and gnuplot to plot the metrics
 ============ Serving Benchmark Result ============
-Successful requests:                     200       
-Benchmark duration (s):                  8.63      
-Total input tokens:                      42659     
-Total generated tokens:                  26776     
-Request throughput (req/s):              23.18     
-Output token throughput (tok/s):         3103.24   
-Total Token throughput (tok/s):          8047.27   
+Successful requests:                     200
+Benchmark duration (s):                  25.98
+Total input tokens:                      42659
+Total generated tokens:                  43037
+Request throughput (req/s):              7.70
+Output token throughput (tok/s):         1656.66
+Peak output token throughput (tok/s):    3494.00
+Peak concurrent requests:                200.00
+Total Token throughput (tok/s):          3298.77
 ---------------Time to First Token----------------
-Mean TTFT (ms):                          1441.22   
-Median TTFT (ms):                        2112.70   
-P99 TTFT (ms):                           2134.04   
+Mean TTFT (ms):                          4062.30
+Median TTFT (ms):                        4279.80
+P99 TTFT (ms):                           7126.81
 -----Time per Output Token (excl. 1st token)------
-Mean TPOT (ms):                          9.74      
-Median TPOT (ms):                        9.70      
-P99 TPOT (ms):                           15.87     
+Mean TPOT (ms):                          39.76
+Median TPOT (ms):                        37.46
+P99 TPOT (ms):                           74.30
 ---------------Inter-token Latency----------------
-Mean ITL (ms):                           9.49      
-Median ITL (ms):                         9.38      
-P99 ITL (ms):                            16.01     
+Mean ITL (ms):                           33.90
+Median ITL (ms):                         32.67
+P99 ITL (ms):                            52.24
 ----------------End-to-end Latency----------------
-Mean E2EL (ms):                          2297.19   
-Median E2EL (ms):                        3386.84   
-P99 E2EL (ms):                           8546.65   
+Mean E2EL (ms):                          11357.96
+Median E2EL (ms):                        9917.56
+P99 E2EL (ms):                           25830.99
 ==================================================
+
 ```
 
 ### Benchmark with random
